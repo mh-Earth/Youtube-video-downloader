@@ -3,14 +3,15 @@ import os,sys
 import argparse
 from pydub import AudioSegment
 from time import sleep,time
+import string
+
 def main(args):
-    global fileName,url,PATH,videoType,youtube
+    global fileName,url,PATH,videoType
     url=args.u
     videoType=args.f
     PATH=args.P
     fileName=args.o
     t1=time()
-
     # ____________________________________
     print("[+]Connecting to youtube")
     try:
@@ -35,7 +36,6 @@ def main(args):
             print("######################################### Description ####################################")
             print("\n")
             print(youtube.description)
-                
         elif videoType=="mp4" or videoType=="video":
             video = youtube.streams.first()
             print(f"[+]Type: mp4")
@@ -70,6 +70,15 @@ def main(args):
         print(f"[+]Saving at {PATH}")
     # ____________________________________
 
+    pun=string.punctuation
+    digit=string.digits
+    list1=[]
+    list1.extend(pun)
+    list1.extend(digit)
+    print(list1)
+    for item in list1:
+        fileName=fileName.replace(item,"")
+
     try:
         print("[+]Downloading please wait.......")
         video.download(PATH,fileName)
@@ -81,10 +90,10 @@ def main(args):
 
     fileName=fileName+'.webm'
     # ____________________________________
+    sleep(5)
     if videoType=="mp3" or videoType=="audio":
 
         print("[+]Converting.......")
-        sleep(3)
 
         flac_audio = AudioSegment.from_file(f"{PATH}/{fileName}")
         flac_audio.export(f"{PATH}/{fileName[:-5]}"+".mp3", format="mp3")
@@ -93,6 +102,7 @@ def main(args):
     t2=time()
     print(f"[+]Finished in {t2-t1}s")
     sys.exit()
+    quit()
 
 if __name__=="__main__":
 
