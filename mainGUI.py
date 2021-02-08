@@ -122,7 +122,7 @@ def download():
                 subprocess.call([opener, PATH])
         Button(root,text="Show in folder",command=ShowInFolder).pack(side=TOP,fill=X,anchor=W,padx=8)
     else:
-        messagebox.showerror("Error","Enter youtube link in the entry")
+        messagebox.showerror("Error","Enter youtube video link in the entry")
 
 
 if __name__=="__main__":
