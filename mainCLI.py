@@ -75,7 +75,6 @@ def main(args):
     list1=[]
     list1.extend(pun)
     list1.extend(digit)
-    print(list1)
     for item in list1:
         fileName=fileName.replace(item,"")
 
