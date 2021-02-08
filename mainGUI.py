@@ -15,114 +15,114 @@ def updateStatus(text):
     sbar.update()
 
 def download():
+    
+    global filePath,URL,PATH,videoType
+
+    if url.get():
+        URL=url.get()
+        videoType=combo.get()
+
+        fileInfo=asksaveasfile(filetypes=[("all", ".mp3 .mp4")],mode='w', title="Save the file", defaultextension=f".{videoType}",initialfile="Dont use '/' in file name")
+        filePath=fileInfo.name
+        for i in range(len(filePath)):
+            letter=filePath[len(filePath)-i:len(filePath)]
+            if "/" in letter:
+                file_Name=filePath[len(filePath)-i+1:len(filePath)]
+                PATH=filePath[:len(filePath)-i]
+                break
 
 
-    global filePath,url,PATH,videoType
-    url=url.get()
-    videoType=combo.get()
-    fileInfo=asksaveasfile(filetypes=[("all", ".mp3 .mp4")],mode='w', title="Save the file", defaultextension=f".{videoType}",initialfile="Dont use '/' in file name")
-    filePath=fileInfo.name
+        def history(text):
+            global fill_Name
+            f=open(f"{file_Name}.log","a")
+            f.write(f"{text}\n")
+            f.close()
 
 
-    for i in range(len(filePath)):
-        letter=filePath[len(filePath)-i:len(filePath)]
-        if "/" in letter:
+
+
+        t1=time()
+        history(URL)
+        updateStatus("[+]Connecting to youtube")
+        history("[+]Connecting to youtube")
+        try:
+            youtube = pytube.YouTube(URL)
+            videoLength = youtube.length
+        except Exception as e:
+            updateStatus("[-]Unable to connect youtube")
+            messagebox.showerror("Connection Problem","Unable to connect youtube")
+            history(e)
+            history("[-]Unable to connect youtube")
+            history("[-]Make sure your device is connected to internet")
+            sleep(5)
+            sys.exit()
+
+
+
+        if videoType=="mp3":
+            video = youtube.streams.last()
+        elif videoType=="mp4":
+            video = youtube.streams.first()
+
+
+
+        updateStatus(f'[+]Saving as {file_Name}')
+        updateStatus(f"[+]Saving at {PATH}")
+
+        history(f'[+]Saving as {file_Name}')
+        history(f"[+]Saving at {PATH}")
+        history(f"[+]Type: mp3")
+        history("\n")
+        history("######################################### Description ####################################")
+        history("\n")
+        history(youtube.description)
+        history("##########################################################################################")
+        history("\n")
+
+
+
+
+        try:
+            updateStatus("[+]Downloading please wait.......")
+            history("[+]Downloading please wait.......")
+            file_Name=file_Name[:-4]
+            video.download(PATH,file_Name)
             file_Name=filePath[len(filePath)-i+1:len(filePath)]
-            PATH=filePath[:len(filePath)-i]
-            break
-
-
-    def history(text):
-        global fill_Name
-        f=open(f"{file_Name}.log","a")
-        f.write(f"{text}\n")
-        f.close()
-
+        except Exception as e:
+            history(e)
+            file_Name=filePath[len(filePath)-i+1:len(filePath)]
+            updateStatus("[-]Falied to download")
+            messagebox.showerror("Connection Problem","Falied to download")
+            history("[-]Falied to download")
+            sys.exit()
 
 
 
-    t1=time()
-    history(url)
-    updateStatus("[+]Connecting to youtube")
-    history("[+]Connecting to youtube")
-    try:
-        youtube = pytube.YouTube(url)
-        videoLength = youtube.length
-    except Exception as e:
-        updateStatus("[-]Unable to connect youtube")
-        messagebox.showerror("Connection Problem","Unable to connect youtube")
-        history(e)
-        history("[-]Unable to connect youtube")
-        history("[-]Make sure your device is connected to internet")
+        filePath=filePath[:-4]+'.webm'
         sleep(5)
-        sys.exit()
+        if videoType=="mp3" or videoType=="audio":
+            updateStatus("[+]Converting.......")
+
+            flac_audio = AudioSegment.from_file(filePath[:-5]+".webm")
+            flac_audio.export(filePath[:-5]+".mp3", format="mp3")
 
 
 
-    if videoType=="mp3":
-        video = youtube.streams.last()
-    elif videoType=="mp4":
-        video = youtube.streams.first()
+        t2=time()
+        updateStatus(f"[+]Download completed | [+]Finished in {t2-t1}s")
+        history("[+]Download completed")
+        history(f"[+]Finished in {t2-t1}s")
 
 
-
-    updateStatus(f'[+]Saving as {file_Name}')
-    updateStatus(f"[+]Saving at {PATH}")
-
-    history(f'[+]Saving as {file_Name}')
-    history(f"[+]Saving at {PATH}")
-    history(f"[+]Type: mp3")
-    history("\n")
-    history("######################################### Description ####################################")
-    history("\n")
-    history(youtube.description)
-    history("##########################################################################################")
-    history("\n")
-
-
-
-
-    try:
-        updateStatus("[+]Downloading please wait.......")
-        history("[+]Downloading please wait.......")
-        file_Name=file_Name[:-4]
-        video.download(PATH,file_Name)
-        file_Name=filePath[len(filePath)-i+1:len(filePath)]
-    except Exception as e:
-        history(e)
-        file_Name=filePath[len(filePath)-i+1:len(filePath)]
-        updateStatus("[-]Falied to download")
-        messagebox.showerror("Connection Problem","Falied to download")
-        history("[-]Falied to download")
-        sys.exit()
-
-
-
-    filePath=filePath[:-4]+'.webm'
-    sleep(5)
-    if videoType=="mp3" or videoType=="audio":
-        updateStatus("[+]Converting.......")
-
-        flac_audio = AudioSegment.from_file(filePath[:-5]+".webm")
-        flac_audio.export(filePath[:-5]+".mp3", format="mp3")
-
-
-
-    t2=time()
-    updateStatus(f"[+]Download completed | [+]Finished in {t2-t1}s")
-    history("[+]Download completed")
-    history(f"[+]Finished in {t2-t1}s")
-
-
-    def ShowInFolder():
-        if sys.platform == "win32":
-            os.startfile(PATH)
-        else:
-            opener = "open" if sys.platform == "darwin" else "xdg-open"
-            subprocess.call([opener, PATH])
-        sys.exit()
-    Button(root,text="Show in folder",command=ShowInFolder).pack(side=TOP,fill=X,anchor=W,padx=8)
-
+        def ShowInFolder():
+            if sys.platform == "win32":
+                os.startfile(PATH)
+            else:
+                opener = "open" if sys.platform == "darwin" else "xdg-open"
+                subprocess.call([opener, PATH])
+        Button(root,text="Show in folder",command=ShowInFolder).pack(side=TOP,fill=X,anchor=W,padx=8)
+    else:
+        messagebox.showerror("Error","Enter youtube link in the entry")
 
 
 if __name__=="__main__":
