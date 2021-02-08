@@ -1,6 +1,6 @@
 from tkinter import *
 import pytube
-import os,sys
+import os,sys,subprocess
 from pydub import AudioSegment
 from time import sleep,time
 import string
@@ -17,18 +17,18 @@ def updateStatus(text):
 def download():
 
 
-    global fileName,url,PATH,videoType
+    global filePath,url,PATH,videoType
     url=url.get()
     videoType=combo.get()
-    fileInfo=asksaveasfile(filetypes=[("all", ".mp3 .mp4")],mode='w', title="Save the file", defaultextension=f".{videoType}")
-    fileName=fileInfo.name
+    fileInfo=asksaveasfile(filetypes=[("all", ".mp3 .mp4")],mode='w', title="Save the file", defaultextension=f".{videoType}",initialfile="Dont use '/' in file name")
+    filePath=fileInfo.name
 
 
-    for i in range(len(fileName)):
-        letter=fileName[len(fileName)-i:len(fileName)]
+    for i in range(len(filePath)):
+        letter=filePath[len(filePath)-i:len(filePath)]
         if "/" in letter:
-            file_Name=fileName[len(fileName)-i+1:len(fileName)]
-            PATH=fileName[:len(fileName)-i]
+            file_Name=filePath[len(filePath)-i+1:len(filePath)]
+            PATH=filePath[:len(filePath)-i]
             break
 
 
@@ -42,6 +42,7 @@ def download():
 
 
     t1=time()
+    history(url)
     updateStatus("[+]Connecting to youtube")
     history("[+]Connecting to youtube")
     try:
@@ -65,10 +66,10 @@ def download():
 
 
 
-    updateStatus(f'[+]Saving as {fileName}.{videoType}')
+    updateStatus(f'[+]Saving as {file_Name}')
     updateStatus(f"[+]Saving at {PATH}")
 
-    history(f'[+]Saving as {fileName}.{videoType}')
+    history(f'[+]Saving as {file_Name}')
     history(f"[+]Saving at {PATH}")
     history(f"[+]Type: mp3")
     history("\n")
@@ -77,7 +78,6 @@ def download():
     history(youtube.description)
     history("##########################################################################################")
     history("\n")
-    file_Name=file_Name[:-4]
 
 
 
@@ -85,11 +85,12 @@ def download():
     try:
         updateStatus("[+]Downloading please wait.......")
         history("[+]Downloading please wait.......")
+        file_Name=file_Name[:-4]
         video.download(PATH,file_Name)
-        file_Name=fileName[len(fileName)-i+1:len(fileName)]
+        file_Name=filePath[len(filePath)-i+1:len(filePath)]
     except Exception as e:
         history(e)
-        file_Name=fileName[len(fileName)-i+1:len(fileName)]
+        file_Name=filePath[len(filePath)-i+1:len(filePath)]
         updateStatus("[-]Falied to download")
         messagebox.showerror("Connection Problem","Falied to download")
         history("[-]Falied to download")
@@ -97,13 +98,13 @@ def download():
 
 
 
-    fileName=fileName[:-4]+'.webm'
+    filePath=filePath[:-4]+'.webm'
     sleep(5)
     if videoType=="mp3" or videoType=="audio":
         updateStatus("[+]Converting.......")
 
-        flac_audio = AudioSegment.from_file(fileName[:-5]+".webm")
-        flac_audio.export(fileName[:-5]+".mp3", format="mp3")
+        flac_audio = AudioSegment.from_file(filePath[:-5]+".webm")
+        flac_audio.export(filePath[:-5]+".mp3", format="mp3")
 
 
 
@@ -111,6 +112,16 @@ def download():
     updateStatus(f"[+]Download completed | [+]Finished in {t2-t1}s")
     history("[+]Download completed")
     history(f"[+]Finished in {t2-t1}s")
+
+
+    def ShowInFolder():
+        if sys.platform == "win32":
+            os.startfile(PATH)
+        else:
+            opener = "open" if sys.platform == "darwin" else "xdg-open"
+            subprocess.call([opener, PATH])
+        sys.exit()
+    Button(root,text="Show in folder",command=ShowInFolder).pack(side=TOP,fill=X,anchor=W,padx=8)
 
 
 
@@ -128,7 +139,7 @@ if __name__=="__main__":
     combo.pack(side=TOP,anchor=W,padx=10,pady=0)
     combo.set("mp4")
 
-    Button(root,text="Download",command=download).pack(side=TOP,fill=X,anchor=W,padx=8,pady=20)
+    Download=Button(root,text="Download",command=download).pack(side=TOP,fill=X,anchor=W,padx=8,pady=10)
     status=StringVar()
     status.set("Ready")
     sbar=Label(root,textvariable=status,borderwidth=5,anchor=SW,relief=RAISED)
