@@ -54,17 +54,12 @@ def download():
             history(e)
             history("[-]Unable to connect youtube")
             history("[-]Make sure your device is connected to internet")
-            sleep(5)
-            sys.exit()
+            os.system(f"del /f {filePath}") if sys.platform == "win32" else os.system(f"rm -r {filePath}")
+            return            
 
 
-
-        if videoType=="mp3":
-            video = youtube.streams.last()
-        elif videoType=="mp4":
-            video = youtube.streams.first()
-
-
+        video = youtube.streams.last() if videoType=="mp3" else youtube.streams.first()
+        
 
         updateStatus(f'[+]Saving as {file_Name}')
         updateStatus(f"[+]Saving at {PATH}")
@@ -90,11 +85,11 @@ def download():
             file_Name=filePath[len(filePath)-i+1:len(filePath)]
         except Exception as e:
             history(e)
-            file_Name=filePath[len(filePath)-i+1:len(filePath)]
             updateStatus("[-]Falied to download")
             messagebox.showerror("Connection Problem","Falied to download")
             history("[-]Falied to download")
-            sys.exit()
+            file_Name=filePath[len(filePath)-i+1:len(filePath)]
+            return
 
 
 
@@ -105,7 +100,7 @@ def download():
 
             flac_audio = AudioSegment.from_file(filePath[:-5]+".webm")
             flac_audio.export(filePath[:-5]+".mp3", format="mp3")
-
+            os.system(f"del /f {filePath[:-5]}.webm") if sys.platform == "win32" else os.system(f"rm -r {filePath[:-5]}.webm")
 
 
         t2=time()
@@ -120,7 +115,9 @@ def download():
             else:
                 opener = "open" if sys.platform == "darwin" else "xdg-open"
                 subprocess.call([opener, PATH])
-        Button(root,text="Show in folder",command=ShowInFolder).pack(side=TOP,fill=X,anchor=W,padx=8)
+
+        SIF=Button(root,text="Show in folder",command=ShowInFolder).pack(side=TOP,fill=X,anchor=W,padx=8)
+        
     else:
         messagebox.showerror("Error","Enter youtube video link in the entry")
 
