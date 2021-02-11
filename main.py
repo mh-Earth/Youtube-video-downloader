@@ -7,30 +7,16 @@ import urllib.error
 from pytube.exceptions import RegexMatchError
 from colorama import Fore, Style
 import random
-
-# print(Fore.RED + "Hello World")
+from banners import randomBanners
 
 if __name__ == "__main__":
     # if not os.geteuid() == 0:
     #     sys.exit("""\033[1;91m\n[!] This srcipt must be run as root or administrator. ¯\_(ツ)_/¯\n\033[1;m""")
 
     colors = [Fore.RED, Fore.RED, Fore.GREEN, Fore.YELLOW, Fore.BLUE, Fore.MAGENTA, Fore.CYAN]
-    c = random.choice(colors)
-    print(c + '''
-__   __             _           _                      _      _              
-\ \ / /___   _   _ | |_  _   _ | |__    ___    __   __(_)  __| |  ___   ___  
- \ V // _ \ | | | || __|| | | || '_ \ /  _ \   \ \ / /| | / _  | / _ \ / _ \ 
-  | || (_) || |_| || |_ | |_| || |_) ||  __/    \ V / | || (_| ||  __/| (_) |
-  |_| \___/  \__,_| \__| \__,_||_.__/  \___|     \_/  |_| \__,_| \___| \___/ 
-
-     _                         _ _                   _             
-  __| |  ___  __      __ _____ | |  ___    __ _   __| |  ___  ____ 
- / _` | / _ \ \ \ /\ / //  _  \| | / _ \  / _` | / _` | / _ \| '__|
-| (_| || (_) | \ V  V / | | | || || (_) || (_| || (_| ||  __/| |   
- \__,_| \___/   \_/\_/  |_| |_||_| \___/  \__,_| \__,_| \___||_|   
-
-
-''')
+    randomColors = random.choice(colors)
+    BANNER = randomBanners()
+    print(randomColors+BANNER)
 
     url = input("Enter the video url:")
     t1 = time()
@@ -44,13 +30,13 @@ __   __             _           _                      _      _
         print(f"\033[92m[+]Title: {youtube.title}")
         print(f"\033[92m[+]Length: {videoLength / 60}\033[92m")
     except RegexMatchError as e:
-        print(f"\033[91m[-] {e}")
-        print("\033[91m[-] Empty or Invalid URL")
+        print(f"\033[91m[-] {e}\033[91m")
+        print("\033[91m[-] Empty or Invalid URL\033[91m")
         sys.exit()
     except urllib.error.URLError as e:
-        print(f"[-] {e}")
-        print("[-] Unable To connect to Youtube")
-        print("[-] Please Check your Connection")
+        print(f"\033[91m[-] {e}\033[91m")
+        print("\033[91m[-] Unable To connect to Youtube\033[91m")
+        print("\033[91m[-] Please Check your Connection\033[91m")
         sys.exit()
     # ____________________________________
     while True:
