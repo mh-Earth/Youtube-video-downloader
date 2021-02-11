@@ -43,11 +43,14 @@ __   __             _           _                      _      _
         print("\033[92m[+]connected")
         print(f"\033[92m[+]Title: {youtube.title}")
         print(f"\033[92m[+]Length: {videoLength / 60}\033[92m")
-    except RegexMatchError:
-        print("\033[91m[-]Please Enter URL")
+    except RegexMatchError as e:
+        print(f"\033[91m[-] {e}")
+        print("\033[91m[-] Empty or Invalid URL")
         sys.exit()
-    except urllib.error.URLError:
+    except urllib.error.URLError as e:
+        print(f"[-] {e}")
         print("[-] Unable To connect to Youtube")
+        print("[-] Please Check your Connection")
         sys.exit()
     # ____________________________________
     while True:
