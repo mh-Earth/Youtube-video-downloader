@@ -106,8 +106,8 @@ if __name__ == "__main__":
         print("\033[91m[-]Falied to download\033[91m")
         sys.exit()
     # ____________________________________
-
     fileName = fileName + '.webm'
+
     print("\033[92m[+]Converting.......\033[92m")
     sleep(3)
     # ____________________________________
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         try:
             flac_audio = AudioSegment.from_file(f"{PATH}/{fileName}")
             flac_audio.export(f"{PATH}/{fileName[:-5]}" + ".mp3", format="mp3")
-            os.system(f"del /f {PATH}/{fileName}") if sys.platform == "win32" else os.system(f"rm -r {PATH}/{fileName}")
+            os.system(f"del /f {PATH}/'{fileName}'") if sys.platform == "win32" else os.system(f"rm -r {PATH}/'{fileName}'")
         except Exception as e:
             print(e)
             if sys.platform == "darwin" or "xdg-open":
