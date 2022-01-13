@@ -11,12 +11,11 @@ from banners import randomBanners
 
 if __name__ == "__main__":
     
-   if sys.platform == "darwin" or "xdg-open":
-       if not os.geteuid() == 0:
-           sys.exit("""\033[1;91m\n[!] This srcipt must be run as root or #administrator. ¯\_(ツ)_/¯\n\033[1;m""")
-   else:
-       pass
-
+    if sys.platform == "darwin" or "xdg-open":
+        if not os.geteuid() == 0:
+            sys.exit("""\033[1;91m\n[!] This srcipt must be run as root or #administrator. ¯\_(ツ)_/¯\n\033[1;m""")
+    else:
+        pass
 
     colors = [Fore.RED, Fore.RED, Fore.GREEN, Fore.YELLOW, Fore.BLUE, Fore.MAGENTA, Fore.CYAN]
     randomColors = random.choice(colors)
